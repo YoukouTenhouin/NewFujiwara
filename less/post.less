@@ -1,0 +1,61 @@
+@import 'vars.less';
+
+#posts {
+    min-width:960px;
+    padding:0 20px;
+    margin:auto;
+
+    .post{
+	margin-bottom:10px;
+	border-bottom:1px solid @border-color;
+	
+	.author{
+	    float:left;
+	    text-align:center;
+	    width:160px;
+	}
+
+	.post-body {
+	    margin-right:0px;
+	    margin-left:170px;
+	    padding-left:10px;
+	    min-height:200px;
+
+	    .body-header{
+		height:30px;
+		border-bottom:1px solid @border-color;
+		
+		.info {		    
+		    float:left;
+		}
+
+		.post-ops{
+		    float:right;
+		    margin-top:0;
+		    list-style-type:none;
+		    
+		    li {
+			display:inline-block;
+			
+			a {
+			    color:@button-color;
+			    text-decoration:none;
+			    transition:ease 0.3s;
+			}
+			
+			&:hover a{
+			    color:@button-hover-color;
+			}
+		    }
+		}
+	    }
+
+	    .post-content {
+		font-size:17px;
+		text-align:justify;
+		line-height:23px;
+		font-weight:100;
+	    }
+	}
+    }
+}

@@ -1,0 +1,21 @@
+@import 'vars.less';
+
+.pager {
+    text-align:center;
+    li {
+	display:inline-block;
+	font-size:15px;
+	padding:0 2px;
+	margin:auto;
+	 
+	 a{
+	    color:@button-color;
+	    text-decoration:none;
+	    transition:ease 0.3s;
+	}
+	
+	&:hover a{
+	    color:@button-hover-color;
+	}
+    }
+}

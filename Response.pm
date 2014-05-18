@@ -15,7 +15,7 @@ sub write {
 sub render {
     my $file = shift;
     my $template = Mojo::Template->new;
-    my $body = $template->render_file($file,@_);
+    my $body = $template->render_file('templates/'.$file,@_);
     my $headers = [ 'Content-Type' => 'text/html' ];
     return [200,$headers,[encode_utf8($body)]];
 }

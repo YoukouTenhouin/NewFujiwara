@@ -5,19 +5,18 @@ use warnings;
 
 sub new {
     shift;
-    my $self = bless { rules => { @_ } };
+    my $self = bless { rules => {@_} };
     return $self;
 }
 
 sub route {
     my $self = shift;
     my $uri = shift;
-    my $rules = $self->{rules};
-    for my $reg (keys $rules) {
+    for my $reg (keys $self->{rules}) {
 	if ( $uri =~ $reg ) {
 	    my @args = ( $uri =~ $reg );
-	    my $handler = $rules->{$reg};
-	    return $handler->(@args,@_);
+	    my $h = $self->{rules}->{$reg};
+	    return $h->(@_,@args);
 	}
     }
     return undef;

@@ -3,9 +3,16 @@ use Digest::MD5 qw(md5_hex);
 use Render;
 use MongoDB;
 
-my $thread = shift;
-my $client = MongoDB::MongoClient->new;
-my $db = $client->get_database('fujiwara');
+my ($db,$thread,$posts,$pn,$post_count) = @_;
+my @posts = @$posts;
+%>
+
+<%
+my $has_prev = 0;
+my $has_next = 0;
+
+$has_prev = 1 if (($post_count > 30) && ($pn > 1));
+$has_next = 1 if ($pn*30 < $post_count);
 %>
 
 <html>
@@ -51,13 +58,19 @@ my $db = $client->get_database('fujiwara');
     <div class="header" id="header">
       <h1><%== $thread->{title} %></h1><span>on <%== $thread->{datetime}->ymd("/") %> by <%== $tauthor->{name} %></span>
     </div>
+    
+    % if ($has_prev or $has_next) {
+    <ul class="pager">
+      % if ($has_prev) {
+      <li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
+      % }
+      % if ($has_next) {
+      <li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
+      % }
+    </ul>
+    % }
 
-    <%
-    my $pcoll = $db->get_collection('posts');
-    my @posts = $pcoll->find({th => $thread->{_id}})->sort({datetime => 1})->all;
-    %>
-
-    <% my $floor = 0; %>
+    <% my $floor = ($pn-1)*30; %>
     <div class="posts" id="posts">
       % for (@posts) {
       <%
@@ -91,6 +104,16 @@ my $db = $client->get_database('fujiwara');
         </div>
       </div>
       % }
+          % if ($has_prev or $has_next) {
+      <ul class="pager">
+	% if ($has_prev) {
+	<li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
+	% }
+	% if ($has_next) {
+	<li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
+	% }
+      </ul>
+    % }
     </div>
     <script src="/js/jquery-1.11.0.min.js"></script>
     <script src="/js/nav-dropdown.js"></script>

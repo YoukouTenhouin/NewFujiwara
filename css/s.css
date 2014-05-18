@@ -152,3 +152,20 @@ html {
   line-height: 23px;
   font-weight: 100;
 }
+.pager {
+  text-align: center;
+}
+.pager li {
+  display: inline-block;
+  font-size: 15px;
+  padding: 0 2px;
+  margin: auto;
+}
+.pager li a {
+  color: #777777;
+  text-decoration: none;
+  transition: ease 0.3s;
+}
+.pager li:hover a {
+  color: #5555ff;
+}

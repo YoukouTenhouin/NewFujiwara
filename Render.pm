@@ -15,9 +15,7 @@ my $md = Text::Markdown::Hoedown::Markdown->new(
 sub render {
     my $post = shift;    
     my $content = $post->{content};
-#    $content =~ s/\n/\n\n/g;
     my $rendered = $md->render($content);
-    $rendered =~ s/(<code>.*)\n\n(.*<\/code>)/\$1\n\$2/g;
     return $rendered;
 }
     

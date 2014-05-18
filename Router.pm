@@ -20,6 +20,7 @@ sub route {
 	    return $handler->(@args,@_);
 	}
     }
+    return undef;
 }
 
 1;

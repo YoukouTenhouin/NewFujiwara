@@ -12,7 +12,7 @@ my $has_prev = 0;
 my $has_next = 0;
 
 $has_prev = 1 if (($post_count > 30) && ($pn > 1));
-$has_next = 1 if ($pn*30 < $post_count);
+$has_next = 1 if (($pn * 30) < $post_count);
 %>
 
 <html>
@@ -70,7 +70,7 @@ $has_next = 1 if ($pn*30 < $post_count);
     </ul>
     % }
 
-    <% my $floor = ($pn-1)*30; %>
+    <% my $floor = ($pn - 1) * 30; %>
     <div class="posts" id="posts">
       % for (@posts) {
       <%

@@ -1,0 +1,41 @@
+@import 'vars.less';
+
+.entry-list {
+    list-style-type: none;
+    width:960px;
+    margin:auto;
+
+    .entry{
+	border-bottom:1px solid @border-color;
+	padding:10px;
+	position:relative;
+	
+	h1 {
+	    margin-top:0px;
+	    margin-bottom:30px;
+	    a {
+		display:block;
+		color:@button-color;
+		text-decoration:none;
+		transition:ease 0.3s;
+	    }
+	    
+	    &:hover a{
+		color:@button-hover-color;
+	    }
+	}
+
+	.info-span {
+	    position:absolute;
+	    bottom:10px;
+	    
+	    &-left {
+		left:10px;
+	    }
+	    
+	    &-right {
+		right:10px;
+	    }
+	}
+    }
+}

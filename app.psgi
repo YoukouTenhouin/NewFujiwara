@@ -9,8 +9,8 @@ use Response;
 require 'view.pl';
 require 'index.pl';
 
-my $router = Router->new( qr/^\/$/ => \&index ,
-			  qr"/thread/view/([^/]+)/(\d+)" => \&view );
+my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
+			  qr'^/thread/view/([^/]+)/(\d+)$' => \&view );
 
 my $app = sub {
     my $env = shift;

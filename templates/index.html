@@ -2,17 +2,23 @@
 use Digest::MD5 qw(md5_hex);
 use Render;
 use MongoDB;
+use boolean;
 
-my $req = shift;
-my $client = MongoDB::MongoClient->new;
-my $db = $client->get_database('fujiwara');
+my ($db,$threads,$count,$pn) = @_;
+my @threads = @$threads;
+
+my $has_prev = 0;
+my $has_next = 0;
+
+$has_prev = 1 if (($count > 30) && ($pn > 1));
+$has_next = 1 if (($pn * 30) < $count);
 %>
 
 <html>
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title><%== $thread->{title} %> -- Truth Avaliable</title>
+    <title>Index -- Truth Avaliable</title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
@@ -43,57 +49,51 @@ my $db = $client->get_database('fujiwara');
       </div>
     </nav>
 
-    <%
-    my $ucoll = $db->get_collection('users');
-    my $tauthor = $ucoll->find({_id => $thread->{author}})->next;
-    %>
     
     <div class="header" id="header">
-      <h1><%== $thread->{title} %></h1><span>on <%== $thread->{datetime}->ymd("/") %> by <%== $tauthor->{name} %></span>
-    </div>
-
-    <%
-    my $pcoll = $db->get_collection('posts');
-    my @posts = $pcoll->find({th => $thread->{_id}})->sort({datetime => 1})->all;
-    %>
-
-    <% my $floor = 0; %>
-    <div class="posts" id="posts">
-      % for (@posts) {
-      <%
-      my $post = $_;
-      $floor++;
-      my $pauthor = $ucoll->find({_id => $post->{author}})->next;
-      %>
-      <div class="post">
-        <div class="author">
-          <div class="avatar">
-	    % my $email = $pauthor->{email};$email =~ s/^\s+|\s+$//g;
-            <img src="http://www.gravatar.com/avatar/<%== md5_hex(lc($email)) %>?size=140"/>
-          </div>
-
-          <span><%== $pauthor->{name} %></span>
-        </div>
-
-        <div class="post-body">
-          <div class="body-header">
-            <div class="info">
-              <span>No.<%== $floor %> </span><span>posted on <%== $post->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
-            </div>
-            <ul class="post-ops">
-              <li><a href="javascript:;">Reply</a></li>
-            </ul>
-          </div>
-        
-          <div class="post-content">
-	    <%= Render::render($post) %>
-          </div>
-        </div>
-      </div>
+      <h1>Truth Avaliable</h1><span>It's running BACKWARD!</span>
+    </div>    
+    
+    <div class="container">
+      % if ($has_prev or $has_next) {
+      <ul class="pager">
+	% if ($has_prev) {
+	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
+	% }
+	% if ($has_next) {
+	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
+	% }
+      </ul>
+      % }
+      
+      <ul class="entry-list">
+	% for my $th (@threads) {
+	<%
+	my $last = $db->get_collection('posts')->find({th => $th->{_id},hidden => false})->sort({datetime => -1})->next;
+	my $tauthor = $db->get_collection('users')->find({_id => $th->{author}})->next;
+	my $lauthor = $db->get_collection('users')->find({_id => $last->{author}})->next;
+	%>
+	<li><div class="entry">
+	  <h1><a href="/thread/view/<%= $th->{_id} %>"><%= $th->{title} %></a></h1>
+	  <span class="info-span info-span-left">Published by <%= $tauthor->{name} %> on <%= $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
+	  <span class="info-span info-span-right">Last Replied by <%= $lauthor->{name} %> on <%= $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
+	</div></li>
+	% }
+      </ul>
+      
+      % if ($has_prev or $has_next) {
+      <ul class="pager">
+	% if ($has_prev) {
+	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
+	% }
+	% if ($has_next) {
+	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
+	% }
+      </ul>
       % }
     </div>
+    
     <script src="/js/jquery-1.11.0.min.js"></script>
     <script src="/js/nav-dropdown.js"></script>
   </body>
 </html>
-        

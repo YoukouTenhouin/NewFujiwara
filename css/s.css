@@ -169,3 +169,36 @@ html {
 .pager li:hover a {
   color: #5555ff;
 }
+.entry-list {
+  list-style-type: none;
+  width: 960px;
+  margin: auto;
+}
+.entry-list .entry {
+  border-bottom: 1px solid #cccccc;
+  padding: 10px;
+  position: relative;
+}
+.entry-list .entry h1 {
+  margin-top: 0px;
+  margin-bottom: 30px;
+}
+.entry-list .entry h1 a {
+  display: block;
+  color: #777777;
+  text-decoration: none;
+  transition: ease 0.3s;
+}
+.entry-list .entry h1:hover a {
+  color: #5555ff;
+}
+.entry-list .entry .info-span {
+  position: absolute;
+  bottom: 10px;
+}
+.entry-list .entry .info-span-left {
+  left: 10px;
+}
+.entry-list .entry .info-span-right {
+  right: 10px;
+}

@@ -4,16 +4,15 @@ use boolean;
 use Response;
 
 sub index {
+    my($req,$pn) = @_;
     my $cl = MongoDB::MongoClient->new;
     my $db = $cl->get_database('fujiwara');
     my $coll = $db->get_collection("threads");
     my $cur = $coll->find({hidden => false})->sort({lastreply => -1 });
-    my $body = '<html><head><meta charset="utf8"/><titile>Index</title></head>';
-    $body .= '<body><ul>';
-    $body .= "<li><a href=\"/thread/view/$_->{_id}\">$_->{title}</a></li>" foreach($cur->all);
-    $body .= '</ul></body></html>';
-
-    return Response::write($body,Content-Type => "text/html");
+    my $count = $cur->count();
+    return Response::abort(404) if ((($pn * 30) - $count) > 30);
+    my @threads = $cur->skip(($pn - 1) * 30)->limit(30)->all;
+    return Response::render("index.html",$db,\@threads,$count,$pn);
 }
 
 1;

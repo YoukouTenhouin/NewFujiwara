@@ -16,7 +16,8 @@ sub route {
 	if ( $uri =~ $reg ) {
 	    my @args = ( $uri =~ $reg );
 	    my $h = $self->{rules}->{$reg};
-	    return $h->(@_,@args);
+	    $h->(@_,@args);
+	    return 1;
 	}
     }
     return undef;

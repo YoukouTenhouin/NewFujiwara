@@ -1,20 +1,12 @@
-<%
-use Digest::MD5 qw(md5_hex);
-use Render;
-use MongoDB;
+use strict;
+use warnings;
 
-my ($db,$thread,$posts,$pn,$post_count) = @_;
-my @posts = @$posts;
-%>
+use HTML::Escape;
 
-<%
-my $has_prev = 0;
-my $has_next = 0;
-
-$has_prev = 1 if (($post_count > 30) && ($pn > 1));
-$has_next = 1 if (($pn * 30) < $post_count);
-%>
-
+sub base {
+    my ($res,$title,$cont) = @_;
+    my $page = <<"EOS"
+	
 <html>
   <head>
     <meta charset="utf8"/>
@@ -23,40 +15,35 @@ $has_next = 1 if (($pn * 30) < $post_count);
   </head>
   <body>
     <nav id="navbar" class="navbar">
-      <div id="navbar-left">
-        <a id="navbar-brand">
-          Truth Avaliable
-        </a>
-
-        <ul class="navbar-links">
-          <li><a href="/">Index</a></li>
-          <li><a href="#">Categories</a></li>
-          <li><a href="#">Tags</a></li>
-        </ul>
-      </div>
-
-      <div id="navbar-right">
-        <ul class="navbar-links">
-          <li><a href="javascript:;">New</a></li>
-          <li class="nav-dropdown">
-            <a href="javascript:;" class="nav-dropdown-link">ExampleUser</a>
-            <ul class="nav-dropdown-menu">
-              <li><a href="javascript:;">User Center</a></li>
-              <li class="nav-dropdown-sep"></li>
-              <li><a href="javascript:;">Logout</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <%
-    my $ucoll = $db->get_collection('users');
-    my $tauthor = $ucoll->find({_id => $thread->{author}})->next;
-    %>
+    <div id="navbar-left">
+      <a id="navbar-brand">
+        Truth Avaliable
+      </a>
     
-    <div class="header" id="header">
-      <h1><%== $thread->{title} %></h1><span>on <%== $thread->{datetime}->ymd("/") %> by <%== $tauthor->{name} %></span>
+      <ul class="navbar-links">
+        <li><a href="/">Index</a></li>
+	<li><a href="#">Categories</a></li>
+	<li><a href="#">Tags</a></li>
+      </ul>
+    </div>
+
+    <div id="navbar-right">
+      <ul class="navbar-links">
+        <li><a href="javascript:;">New</a></li>
+	<li class="nav-dropdown">
+	  <a href="javascript:;" class="nav-dropdown-link">ExampleUser</a>
+	  <ul class="nav-dropdown-menu">
+	    <li><a href="javascript:;">User Center</a></li>
+	    <li class="nav-dropdown-sep"></li>
+	    <li><a href="javascript:;">Logout</a></li>
+	  </ul>
+	</li>
+      </ul>
+    </div>
+  </nav>
+  <div class="header" id="header">
+EOS
+    $page .= '<h1>'.escape_html($thread->{title}).'</h1><span>on $thread->{datetime}->ymd("/") %> by <%== $tauthor->{name} %></span>'
     </div>
     
     % if ($has_prev or $has_next) {
@@ -117,8 +104,7 @@ $has_next = 1 if (($pn * 30) < $post_count);
     </div>
     <script src="/js/nav-dropdown.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-    <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/default.min.css">
-    <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
   </body>
 </html>
         
+

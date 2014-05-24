@@ -3,27 +3,79 @@ package Response;
 use strict;
 use warnings;
 
-use Mojo::Template;
 use Encode;
+use Mojo::Template;
+
+sub new {
+    shift;
+    my $res = { buf => [],
+		headers => [ 'Content-Type' => 'text/html' ],
+		cookies => {},
+		status => 200 };
+    bless($res);
+    return $res;
+}
 
 sub write {
+    my $self = shift;
     my $content = shift;
-    my $headers = \@_;
-    return [200,$headers,[encode_utf8($content)]];
+    $self->{buf} = [ @{$self->{buf}} ,encode_utf8($content) ];
 }
 
 sub render {
+    my $self = shift;
     my $file = shift;
-    my $template = Mojo::Template->new;
-    my $body = $template->render_file('templates/'.$file,@_);
-    my $headers = [ 'Content-Type' => 'text/html' ];
-    return [200,$headers,[encode_utf8($body)]];
+    my $tmp = Mojo::Template->new;
+    my $rendered = $tmp->render_file('templates/' . $file,@_);
+    push(@{$self->{buf}},encode_utf8($rendered));
+}
+
+sub set_headers {
+    my $self = shift;
+    $self->{headers} = [
+	@{$self->{headers}},
+	@_
+    ];
+}
+
+sub set_cookies {
+    my $self = shift;
+    my $key = shift;
+    my $value = shift;
+
+    my $cookie = {
+	value => $value,
+	@_
+    };
+
+    $self->{cookies}->{$key} =$cookie;
 }
 
 sub abort {
+    my $self = shift;
     my $status = shift;
-    my $headers = [ 'Content-Type' => 'text/plain' , @_ ];
-    return [$status,$headers,[ $status ]];
+    $self = {
+	buf => [ $status ],
+	headers => { 'Content-Type' => 'text/plain' },
+	status => $status
+    };
+}
+
+sub psgi {
+    my $self = shift;
+
+    foreach(keys %{$self->{cookies}}) {
+	my $cookie = $self->{cookies}->{$_};
+	my $buf = "$_={$cookie->{value}}";
+	$buf .= ";Domain=" . $cookie->{domain} if ($cookie->{domain});
+	$buf .= ";Path=" . $cookie->{path} if ($cookie->{path});
+	$buf .= ";Expires=" . $cookie->{expires}->strftime("%a, %d %b %y %T GMT") if (my $t = $cookie->{expires});
+	$buf .= ";Secure" if ($cookie->{secure});
+	$buf .= ";HttpOnly" if ($cookie->{secure});
+	push(@{$self->{headers}},"Set-Cookie" => $buf);
+    }
+    
+    return [ $self->{status}, $self->{headers}, $self->{buf} ];
 }
 
 1;

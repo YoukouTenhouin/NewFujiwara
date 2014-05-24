@@ -4,13 +4,14 @@ use Render;
 use MongoDB;
 use boolean;
 
-use Database::Post;
-use Database::User;
+my ($db,$threads,$count,$pn) = @_;
+my @threads = @$threads;
 
-my($req,$res,$threads,$pn) = @_;
+my $has_prev = 0;
+my $has_next = 0;
 
-my $ucookie = $req->get_cookies('userinfo');
-my $user = Database::User->decode_cookie($ucookie);
+$has_prev = 1 if (($count > 30) && ($pn > 1));
+$has_next = 1 if (($pn * 30) < $count);
 %>
 
 <html>
@@ -37,8 +38,7 @@ my $user = Database::User->decode_cookie($ucookie);
         <ul class="navbar-links">
           <li><a href="javascript:;">New</a></li>
           <li class="nav-dropdown">
-	    % if ($user) {
-            <a href="javascript:;" class="nav-dropdown-link"><%= $user->{name} %></a>
+            <a href="javascript:;" class="nav-dropdown-link">ExampleUser</a>
             <ul class="nav-dropdown-menu">
               <li><a href="javascript:;">User Center</a></li>
               <li class="nav-dropdown-sep"></li>
@@ -55,36 +55,38 @@ my $user = Database::User->decode_cookie($ucookie);
     </div>    
     
     <div class="container">
+      % if ($has_prev or $has_next) {
       <ul class="pager">
-	% if ($thread->has_prev}) {
+	% if ($has_prev) {
 	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
 	% }
-	% if ($thread->has_next) {
+	% if ($has_next) {
 	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
 	% }
       </ul>
+      % }
       
       <ul class="entry-list">
-	% for my $th (@{$threads->all}) {
+	% for my $th (@threads) {
 	<%
-	my $author = $th->author;
-	my $last = $th->posts->last;
-	my $lauthor = $last->author;
+	my $last = $db->get_collection('posts')->find({th => $th->{_id},hidden => false})->sort({datetime => -1})->next;
+	my $tauthor = $db->get_collection('users')->find({_id => $th->{author}})->next;
+	my $lauthor = $db->get_collection('users')->find({_id => $last->{author}})->next;
 	%>
 	<li><div class="entry">
-	  <h1><a href="/thread/view/<%= $th->{id} %>"><%= $th->{title} %></a></h1>
-	  <span class="info-span info-span-left">Published by <%= $author->{name} %> on <%= $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
+	  <h1><a href="/thread/view/<%= $th->{_id} %>"><%= $th->{title} %></a></h1>
+	  <span class="info-span info-span-left">Published by <%= $tauthor->{name} %> on <%= $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	  <span class="info-span info-span-right">Last Replied by <%= $lauthor->{name} %> on <%= $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	</div></li>
 	% }
       </ul>
       
-      % if ($th->has_prev or $th->has_next) {
+      % if ($has_prev or $has_next) {
       <ul class="pager">
-	% if ($th->has_prev) {
+	% if ($has_prev) {
 	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
 	% }
-	% if ($th->has_next) {
+	% if ($has_next) {
 	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
 	% }
       </ul>

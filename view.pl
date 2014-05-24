@@ -4,30 +4,21 @@ use boolean;
 
 use Response;
 
-require 'mongo_client.pl';
-
 sub view {
-    my($req,$res,$tid,$pn) = @_;
+    my($req,$tid,$pn) = @_;
     
-    my $cl = get_mongo_client();
-    my $db = $cl->get_database('fujiwara');
+    my $db = MongoDB::MongoClient->new->get_database('fujiwara');
     my $tcoll = $db->get_collection("threads");
     my $tcur = $tcoll->find({_id => MongoDB::OID->new($tid)});
-    if (!$tcur->has_next) {
-	$res->abort(404);
-	return;
-    }
+    return Response::abort(404) if (!$tcur->has_next);
     my $th = $tcur->next;
 
     my $pcoll = $db->get_collection("posts");
     my $cur = $pcoll->find({th => $th->{_id},hidden => false})->sort({datetime => 1});
     my $post_count = $cur->count();
-    if (($pn-1) * 30 > $post_count) {
-	$res->abort(403);
-	return;
-    }
+    return Response::abort(403) if (($pn-1) * 30 > $post_count);    
     my @posts = $cur->skip(($pn-1)*30)->limit(30)->all;
-    $res->render("view.html",$db,$th,\@posts,$pn,$post_count);
+    return Response::render("view.html",$db,$th,\@posts,$pn,$post_count);
 }
 
 1;

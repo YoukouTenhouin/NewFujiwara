@@ -3,79 +3,27 @@ package Response;
 use strict;
 use warnings;
 
-use Encode;
 use Mojo::Template;
-
-sub new {
-    shift;
-    my $res = { buf => [],
-		headers => [ 'Content-Type' => 'text/html' ],
-		cookies => {},
-		status => 200 };
-    bless($res);
-    return $res;
-}
+use Encode;
 
 sub write {
-    my $self = shift;
     my $content = shift;
-    $self->{buf} = [ @{$self->{buf}} ,encode_utf8($content) ];
+    my $headers = \@_;
+    return [200,$headers,[encode_utf8($content)]];
 }
 
 sub render {
-    my $self = shift;
     my $file = shift;
-    my $tmp = Mojo::Template->new;
-    my $rendered = $tmp->render_file('templates/' . $file,@_);
-    push(@{$self->{buf}},encode_utf8($rendered));
-}
-
-sub set_headers {
-    my $self = shift;
-    $self->{headers} = [
-	@{$self->{headers}},
-	@_
-    ];
-}
-
-sub set_cookies {
-    my $self = shift;
-    my $key = shift;
-    my $value = shift;
-
-    my $cookie = {
-	value => $value,
-	@_
-    };
-
-    $self->{cookies}->{$key} =$cookie;
+    my $template = Mojo::Template->new;
+    my $body = $template->render_file('templates/'.$file,@_);
+    my $headers = [ 'Content-Type' => 'text/html' ];
+    return [200,$headers,[encode_utf8($body)]];
 }
 
 sub abort {
-    my $self = shift;
     my $status = shift;
-    $self = {
-	buf => [ $status ],
-	headers => { 'Content-Type' => 'text/plain' },
-	status => $status
-    };
-}
-
-sub psgi {
-    my $self = shift;
-
-    foreach(keys %{$self->{cookies}}) {
-	my $cookie = $self->{cookies}->{$_};
-	my $buf = "$_={$cookie->{value}}";
-	$buf .= ";Domain=" . $cookie->{domain} if ($cookie->{domain});
-	$buf .= ";Path=" . $cookie->{path} if ($cookie->{path});
-	$buf .= ";Expires=" . $cookie->{expires}->strftime("%a, %d %b %y %T GMT") if (my $t = $cookie->{expires});
-	$buf .= ";Secure" if ($cookie->{secure});
-	$buf .= ";HttpOnly" if ($cookie->{secure});
-	push(@{$self->{headers}},"Set-Cookie" => $buf);
-    }
-    
-    return [ $self->{status}, $self->{headers}, $self->{buf} ];
+    my $headers = [ 'Content-Type' => 'text/plain' , @_ ];
+    return [$status,$headers,[ $status ]];
 }
 
 1;

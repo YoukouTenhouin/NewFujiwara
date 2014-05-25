@@ -8,8 +8,6 @@ use Response;
 
 use Data::Threads;
 
-require 'mongo_client.pl';
-
 sub index {
     my($req,$res,$pn) = @_;
     my $threads = Data::Threads->list->page($pn);

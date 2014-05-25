@@ -4,13 +4,18 @@ use Render;
 use MongoDB;
 use boolean;
 
-use Database::Post;
-use Database::User;
+use Data::Post;
+use Data::User;
 
 my($req,$res,$threads,$pn) = @_;
 
-my $ucookie = $req->get_cookies('userinfo');
-my $user = Database::User->decode_cookie($ucookie);
+my $ucookie = $req->get_cookie('userinfo');
+my $uid;
+my $user;
+if ($ucookie) {
+    $uid = Data::User->decode_cookie($ucookie);
+    $user = Data::User->by_id($uid);
+}
 %>
 
 <html>
@@ -35,35 +40,40 @@ my $user = Database::User->decode_cookie($ucookie);
 
       <div id="navbar-right">
         <ul class="navbar-links">
+	  % if ($user) {
           <li><a href="javascript:;">New</a></li>
-          <li class="nav-dropdown">
-	    % if ($user) {
-            <a href="javascript:;" class="nav-dropdown-link"><%= $user->{name} %></a>
+          <li class="nav-dropdown">	    
+            <a href="javascript:;" class="nav-dropdown-link"><%== $user->{name} %></a>
             <ul class="nav-dropdown-menu">
               <li><a href="javascript:;">User Center</a></li>
               <li class="nav-dropdown-sep"></li>
-              <li><a href="javascript:;">Logout</a></li>
+              <li><a href="/logout">Logout</a></li>
             </ul>
           </li>
+	  % } else {
+	  <li><a href="/login">Login</a></li>
+	  <li><a href="javascript:;">Register</a></li>
+	  % }
         </ul>
       </div>
     </nav>
-
     
     <div class="header" id="header">
       <h1>Truth Avaliable</h1><span>It's running BACKWARD!</span>
     </div>    
     
     <div class="container">
+      % if ($threads->has_prev or $threads->has_next) {
       <ul class="pager">
-	% if ($thread->has_prev}) {
+	% if ($threads->has_prev) {
 	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
 	% }
-	% if ($thread->has_next) {
+	% if ($threads->has_next) {
 	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
 	% }
       </ul>
-      
+      % }
+    
       <ul class="entry-list">
 	% for my $th (@{$threads->all}) {
 	<%
@@ -72,26 +82,26 @@ my $user = Database::User->decode_cookie($ucookie);
 	my $lauthor = $last->author;
 	%>
 	<li><div class="entry">
-	  <h1><a href="/thread/view/<%= $th->{id} %>"><%= $th->{title} %></a></h1>
-	  <span class="info-span info-span-left">Published by <%= $author->{name} %> on <%= $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
-	  <span class="info-span info-span-right">Last Replied by <%= $lauthor->{name} %> on <%= $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
+	  <h1><a href="/thread/view/<%= $th->{id} %>"><%== $th->{title} %></a></h1>
+	  <span class="info-span info-span-left">Published by <%== $author->{name} %> on <%== $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
+	  <span class="info-span info-span-right">Last Replied by <%== $lauthor->{name} %> on <%== $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	</div></li>
 	% }
       </ul>
       
-      % if ($th->has_prev or $th->has_next) {
+      % if ($threads->has_prev or $threads->has_next) {
       <ul class="pager">
-	% if ($th->has_prev) {
+	% if ($threads->has_prev) {
 	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
 	% }
-	% if ($th->has_next) {
+	% if ($threads->has_next) {
 	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
 	% }
       </ul>
       % }
     </div>
     
-    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="/js/nav-dropdown.js"></script>
   </body>
 </html>

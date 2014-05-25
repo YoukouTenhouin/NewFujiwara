@@ -1,4 +1,4 @@
-package Thread;
+package Data::Thread;
 
 use strict;
 use warnings;
@@ -11,6 +11,7 @@ use Data::Posts;
 use Data::User;
 
 sub init {
+    shift;
     my $thread = shift;
     my $ret = {
 	id => $thread->{_id},
@@ -27,12 +28,12 @@ sub init {
 
 sub posts {
     my $self = shift;
-    return Database::Posts->by_thread($self->{id},@_);
+    return Data::Posts->by_thread($self->{id},@_);
 }
 
 sub author {
     my $self = shift;
-    return Database::User->by_id($self->{author});
+    return Data::User->by_id($self->{author});
 }
 
 1;

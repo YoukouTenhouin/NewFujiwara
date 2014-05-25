@@ -38,27 +38,36 @@ sub set_headers {
     ];
 }
 
-sub set_cookies {
+sub set_cookie {
     my $self = shift;
     my $key = shift;
     my $value = shift;
 
     my $cookie = {
 	value => $value,
+	path => '/',
 	@_
     };
 
     $self->{cookies}->{$key} =$cookie;
 }
 
+sub redirect {
+    my $self = shift;
+    my $location = shift;
+    $self->{status} = 302;
+    push(@{$self->{headers}},Location => $location);
+}
+
 sub abort {
     my $self = shift;
     my $status = shift;
-    $self = {
+    %$self = (
 	buf => [ $status ],
-	headers => { 'Content-Type' => 'text/plain' },
-	status => $status
-    };
+	headers => [ 'Content-Type' => 'text/plain' ],
+	status => $status,
+	cookies => {}
+    );
 }
 
 sub psgi {
@@ -66,16 +75,17 @@ sub psgi {
 
     foreach(keys %{$self->{cookies}}) {
 	my $cookie = $self->{cookies}->{$_};
-	my $buf = "$_={$cookie->{value}}";
+	my $buf = "$_=$cookie->{value}";
 	$buf .= ";Domain=" . $cookie->{domain} if ($cookie->{domain});
 	$buf .= ";Path=" . $cookie->{path} if ($cookie->{path});
-	$buf .= ";Expires=" . $cookie->{expires}->strftime("%a, %d %b %y %T GMT") if (my $t = $cookie->{expires});
+	$buf .= ";Expires=" . $cookie->{expires}->strftime("%a, %d %b %Y %T GMT") if (my $t = $cookie->{expires});
 	$buf .= ";Secure" if ($cookie->{secure});
 	$buf .= ";HttpOnly" if ($cookie->{secure});
 	push(@{$self->{headers}},"Set-Cookie" => $buf);
     }
     
-    return [ $self->{status}, $self->{headers}, $self->{buf} ];
+    my $ret = [ $self->{status}, $self->{headers}, $self->{buf} ];
+    return $ret;
 }
 
 1;

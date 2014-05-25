@@ -1,25 +1,24 @@
 <%
 use Digest::MD5 qw(md5_hex);
 use Render;
-use MongoDB;
+use Data::User;
 
-my ($db,$thread,$posts,$pn,$post_count) = @_;
-my @posts = @$posts;
-%>
+my ($req,$res,$th,$posts,$pn) = @_;
 
-<%
-my $has_prev = 0;
-my $has_next = 0;
-
-$has_prev = 1 if (($post_count > 30) && ($pn > 1));
-$has_next = 1 if (($pn * 30) < $post_count);
+my $ucookie = $req->get_cookie('userinfo');
+my $uid;
+my $user;
+if ($ucookie) {
+    $uid = Data::User->decode_cookie($ucookie);
+    $user = Data::User->by_id($uid);
+}
 %>
 
 <html>
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title><%== $thread->{title} %> -- Truth Avaliable</title>
+    <title><%== $th->{title} %> -- Truth Avaliable</title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
@@ -37,55 +36,52 @@ $has_next = 1 if (($pn * 30) < $post_count);
 
       <div id="navbar-right">
         <ul class="navbar-links">
+	  % if ($user) {
           <li><a href="javascript:;">New</a></li>
-          <li class="nav-dropdown">
-            <a href="javascript:;" class="nav-dropdown-link">ExampleUser</a>
+          <li class="nav-dropdown">	    
+            <a href="javascript:;" class="nav-dropdown-link"><%== $user->{name} %></a>
             <ul class="nav-dropdown-menu">
               <li><a href="javascript:;">User Center</a></li>
               <li class="nav-dropdown-sep"></li>
-              <li><a href="javascript:;">Logout</a></li>
+              <li><a href="/logout">Logout</a></li>
             </ul>
           </li>
+	  % } else {
+	  <li><a href="/login">Login</a></li>
+	  <li><a href="javascript:;">Register</a></li>
+	  % }
         </ul>
       </div>
     </nav>
 
-    <%
-    my $ucoll = $db->get_collection('users');
-    my $tauthor = $ucoll->find({_id => $thread->{author}})->next;
-    %>
-    
     <div class="header" id="header">
-      <h1><%== $thread->{title} %></h1><span>on <%== $thread->{datetime}->ymd("/") %> by <%== $tauthor->{name} %></span>
+      <h1><%== $th->{title} %></h1><span>on <%== $th->{datetime}->ymd("/") %> by <%== $th->author->{name} %></span>
     </div>
     
-    % if ($has_prev or $has_next) {
+    % if ($posts->has_prev or $posts->has_next) {
     <ul class="pager">
-      % if ($has_prev) {
-      <li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
+      % if ($posts->has_prev) {
+      <li><a href="/thread/view/<%= $th->{id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
       % }
-      % if ($has_next) {
-      <li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
+      % if ($posts->has_next) {
+      <li><a href="/thread/view/<%= $th->{id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
       % }
     </ul>
     % }
 
     <% my $floor = ($pn - 1) * 30; %>
     <div class="posts" id="posts">
-      % for (@posts) {
-      <%
-      my $post = $_;
-      $floor++;
-      my $pauthor = $ucoll->find({_id => $post->{author}})->next;
-      %>
+      % for my $post (@{$posts->all}) {
+      % $floor++;
       <div class="post">
         <div class="author">
           <div class="avatar">
-	    % my $email = $pauthor->{email};$email =~ s/^\s+|\s+$//g;
-            <img src="http://www.gravatar.com/avatar/<%== md5_hex(lc($email)) %>?size=140"/>
+	    % my $author = $post->author;
+	    % my $email = $author->{email};$email =~ s/^\s+|\s+$//g;
+            <img src="http://www.gravatar.com/avatar/<%== md5_hex(lc($email)) %>?size=140&default=identicon"/>
           </div>
 
-          <span><%== $pauthor->{name} %></span>
+          <span><%== $author->{name} %></span>
         </div>
 
         <div class="post-body">
@@ -104,19 +100,25 @@ $has_next = 1 if (($pn * 30) < $post_count);
         </div>
       </div>
       % }
-          % if ($has_prev or $has_next) {
+      % if ($posts->has_prev or $posts->has_next) {
       <ul class="pager">
-	% if ($has_prev) {
-	<li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
+	% if ($posts->has_prev) {
+	<li><a href="/thread/view/<%= $th->{id} %>/<%= $pn - 1 %>">&lt;Prev</a></li>
 	% }
-	% if ($has_next) {
-	<li><a href="/thread/view/<%= $thread->{_id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
+	% if ($posts->has_next) {
+	<li><a href="/thread/view/<%= $th->{id} %>/<%= $pn + 1 %>">Next&gt;</a></li>
 	% }
       </ul>
     % }
     </div>
+    <script type="text/x-mathjax-config;executed=true">
+     MathJax.Hub.Config({
+       tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+     });
+    </script>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="/js/nav-dropdown.js"></script>
-    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/default.min.css">
     <script src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
   </body>

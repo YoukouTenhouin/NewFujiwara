@@ -1,4 +1,4 @@
-package Post;
+package Data::Post;
 
 use strict;
 use warnings;
@@ -26,7 +26,7 @@ sub init {
 
 sub author {
     my $self = shift;
-    return Database->User->by_id($self->{author});
+    return Data::User->by_id($self->{author});
 }
 
 1;

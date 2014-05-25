@@ -85,7 +85,7 @@
 #header {
   border-bottom: 1px solid #cccccc;
   margin-bottom: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 25px;
 }
 pre {
   border: 1px solid #cccccc;
@@ -101,7 +101,7 @@ p code {
   background-color: #dddddd;
 }
 html {
-  font-family: Inconsolata, Monospace, "Trebuchet MS", "Times New Roman", Times, "Wenquanyi Micro Hei", "Microsoft YaHei";
+  font-family: Monospace, "Trebuchet MS", "Times New Roman", Times, "Wenquanyi Micro Hei", "Microsoft YaHei";
 }
 #posts {
   min-width: 960px;
@@ -146,7 +146,9 @@ html {
 #posts .post .post-body .body-header .post-ops li:hover a {
   color: #5555ff;
 }
-#posts .post .post-body .post-content {
+#posts .post .post-body .post-content p,
+#posts .post .post-body li,
+#posts .post .post-body a {
   font-size: 18px;
   text-align: justify;
   line-height: 25px;
@@ -201,4 +203,50 @@ html {
 }
 .entry-list .entry .info-span-right {
   right: 10px;
+}
+form {
+  font-size: 22px;
+  padding: 0 200px;
+}
+.form-control-group {
+  padding: 20px;
+}
+.form-control-group label {
+  width: 100px;
+  color: #777777;
+  text-align: right;
+  display: inline-block;
+}
+.form-control-group input[type="text"],
+.form-control-group input[type="password"],
+.form-control-group input[type="email"] {
+  display: inline-block;
+  font-size: 18px;
+  width: 350px;
+  background: none!important;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+}
+input[type="submit"] {
+  background: none!important;
+  color: #777777;
+  border: none;
+  padding: 0!important;
+  transition: ease 0.1s;
+}
+input[type="submit"]:hover {
+  transition: ease 0.1s;
+  color: #5555ff;
+}
+.alert-failure {
+  color: #ee3333;
+}
+.alert-warning {
+  color: #eeee33;
+}
+.alert-notice {
+  color: #3333ee;
+}
+.alert-success {
+  color: #33ee33;
 }

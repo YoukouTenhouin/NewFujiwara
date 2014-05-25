@@ -1,4 +1,4 @@
-package MongoClient;
+package Data::MongoClient;
 
 use strict;
 use warnings;

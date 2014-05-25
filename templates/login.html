@@ -1,0 +1,65 @@
+<%
+use Digest::MD5 qw(md5_hex);
+use Render;
+
+my($error,$referer,$username) = @_;
+%>
+
+<html>
+  <head>
+    <meta charset="utf8"/>
+    <link rel="stylesheet" type="text/css" href="/css/s.css" />
+    <title>Login -- Truth Avaliable</title>
+  </head>
+  <body>
+    <nav id="navbar" class="navbar">
+      <div id="navbar-left">
+        <a id="navbar-brand">
+          Truth Avaliable
+        </a>
+
+        <ul class="navbar-links">
+          <li><a href="/">Index</a></li>
+          <li><a href="#">Categories</a></li>
+          <li><a href="#">Tags</a></li>
+        </ul>
+      </div>
+
+      <div id="navbar-right">
+        <ul class="navbar-links">
+	  <li><a href="/login">Login</a></li>
+	  <li><a href="javascript:;">Register</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="header" id="header">
+      <h1>Truth Avaliable</h1><span>It's running BACKWARD!</span>
+    </div>    
+
+    <div class="container" style="width:960px;margin:auto;">
+      <form method="POST" action="/login">
+	% if ($error) {
+	<div class="alert alert-failure">
+	  <h3>Wrong user name/password</h3>
+	  <span>Please check</span>
+	</div>
+	% }
+	<div class="form-control-group">
+	  <label>Username</label>
+	  <input type="text" name="name" value="<%= $username %>" placeholder="User name" />
+	</div>
+	<div class="form-control-group">
+	  <label>Password</label>
+	  <input type="password" name="pwd" placeholder"Password" />
+	</div>
+	<input type="hidden" name="referer" value="<%= $referer %>">
+	<input type="submit" value="Login" />
+      </form>
+    </div>
+    
+    <script src="/js/nav-dropdown.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  </body>
+</html>
+        

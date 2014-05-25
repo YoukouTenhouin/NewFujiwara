@@ -1,0 +1,37 @@
+@import 'vars.less';
+
+form {
+    font-size:22px;
+    padding:0 200px;
+}
+
+.form-control-group {
+    padding:20px;
+    label {
+	width:100px;;
+	color:@button-color;
+	text-align:right;
+	display:inline-block;
+    }
+    
+    input[type="text"],input[type="password"],input[type="email"] {
+	display:inline-block;
+	font-size:18px;
+	width:350px;
+	background:none!important;
+	border:none;
+	border-bottom:1px solid @border-color;
+    }
+}
+
+input[type="submit"] {
+    background:none!important;
+    color:@button-color;
+    border:none; 
+    padding:0!important;
+    transition:ease 0.1s;
+    &:hover {
+	transition:ease 0.1s;
+	color:@button-hover-color;
+    }
+}

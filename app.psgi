@@ -7,10 +7,13 @@ use Response;
 
 require 'view.pl';
 require 'index.pl';
-
+require 'login.pl';
+require 'logout.pl';
 my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
 			  qr'^/thread/view/([^/]+)/(\d+)$' => \&view ,
-			  qr'^/posttest' => \&posttest );
+			  qr'^/login$' => \&login ,
+			  qr'^/logout$' => \&logout
+    );
 
 my $app = sub {
     my $env = shift;

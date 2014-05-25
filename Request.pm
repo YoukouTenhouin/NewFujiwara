@@ -28,9 +28,9 @@ sub get_cookie {
     
     if (!$self->{cookies}) {
 	$self->{cookies} = {};
-	my $cookies_str = $self->{env}->{HTTP_COOKIES};
+	my $cookies_str = $self->{env}->{HTTP_COOKIE};
 	return undef if (!$cookies_str);
-	$self->{cookies}->{$key} = $value while(my($key,$value) = ($cookies_str =~ m/([^=]*)=([^;])*;/g));
+	$self->{cookies}->{$1} = $2 while($cookies_str =~ m/([^=]*)=([^;]*)/g);
     }
     return $self->{cookies}->{$key};
 }

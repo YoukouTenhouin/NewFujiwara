@@ -7,8 +7,6 @@ use boolean;
 
 use Response;
 
-require 'mongo_client.pl';
-
 sub view {
     my($req,$res,$tid,$pn) = @_;
     my $th = Data::Threads->by_id($tid);

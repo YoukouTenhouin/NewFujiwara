@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use Text::Markdown::Hoedown;
-use HTML::Escape;
 
 our @EXPORT = qw(render);
 

@@ -19,7 +19,7 @@ my($error,$referer,$username) = @_;
         </a>
 
         <ul class="navbar-links">
-          <li><a href="/">Index</a></li>
+          <li><a href="/" data-instant>Index</a></li>
           <li><a href="#">Categories</a></li>
           <li><a href="#">Tags</a></li>
         </ul>
@@ -27,7 +27,6 @@ my($error,$referer,$username) = @_;
 
       <div id="navbar-right">
         <ul class="navbar-links">
-	  <li><a href="/login">Login</a></li>
 	  <li><a href="javascript:;">Register</a></li>
         </ul>
       </div>
@@ -57,7 +56,11 @@ my($error,$referer,$username) = @_;
 	<input type="submit" value="Login" />
       </form>
     </div>
-    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js"></script>
+    <script>
+     InstantClick.init(50,true);
+    </script>
     <script src="/js/nav-dropdown.js"></script>
     <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
   </body>

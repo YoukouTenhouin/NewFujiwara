@@ -154,6 +154,9 @@ html {
   line-height: 25px;
   font-weight: 100;
 }
+h1 {
+  white-space: nowrap;
+}
 .pager {
   text-align: center;
 }
@@ -173,7 +176,7 @@ html {
 }
 .entry-list {
   list-style-type: none;
-  width: 960px;
+  min-width: 960px;
   margin: auto;
 }
 .entry-list .entry {
@@ -197,6 +200,7 @@ html {
 .entry-list .entry .info-span {
   position: absolute;
   bottom: 10px;
+  font-size: 15px;
 }
 .entry-list .entry .info-span-left {
   left: 10px;
@@ -227,11 +231,17 @@ form {
   border: none;
   border-bottom: 1px solid #cccccc;
 }
+.form-control-group textarea {
+  font-size: 18px;
+  border: 1px solid #cccccc;
+  background: none!important;
+}
 input[type="submit"] {
   background: none!important;
   color: #777777;
   border: none;
   padding: 0!important;
+  margin-left: 15px;
   transition: ease 0.1s;
 }
 input[type="submit"]:hover {

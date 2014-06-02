@@ -9,10 +9,14 @@ require 'view.pl';
 require 'index.pl';
 require 'login.pl';
 require 'logout.pl';
+require 'reply.pl';
+require 'modify_title.pl';
 my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
 			  qr'^/thread/view/([^/]+)/(\d+)$' => \&view ,
 			  qr'^/login$' => \&login ,
-			  qr'^/logout$' => \&logout
+			  qr'^/logout$' => \&logout ,
+			  qr'^/post/new$' => \&reply ,
+			  qr'^/api/modify-title$' => \&modify_title
     );
 
 my $app = sub {

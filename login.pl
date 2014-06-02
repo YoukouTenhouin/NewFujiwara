@@ -7,7 +7,7 @@ use DateTime;
 sub login {
     my($req,$res) = @_;
     if($req->{method} eq "GET") {
-	my $referer = $req->{env}->{HTTP_REFERER};
+	my $referer = $req->headers->{referer};
 	$referer = "/" if(!$referer);
 	$res->render('login.html',0,$referer,'');
 	return;

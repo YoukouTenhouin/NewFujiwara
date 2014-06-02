@@ -75,7 +75,7 @@ sub all {
 sub has_prev {
     my $self = shift;
     my $cursor = $self->{cursor};
-    my $pn = $self->{cursor};
+    my $pn = $self->{pn};
     return (($cursor->count > POST_PER_PAGE) and ($pn > 1));
 }
 
@@ -83,7 +83,7 @@ sub has_next {
     my $self = shift;
     my $cursor = $self->{cursor};
     my $pn = $self->{pn};
-    return ($cursor->count - $pn * POST_PER_PAGE > POST_PER_PAGE);
+    return ($cursor->count > $pn * POST_PER_PAGE);
 }
 
 1;

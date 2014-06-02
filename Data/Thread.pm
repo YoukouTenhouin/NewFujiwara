@@ -21,6 +21,8 @@ sub init {
 	tags => $thread->{tags},
 	hidden => $thread->{hidden},
 	author => $thread->{author},
+	category => $thread->{category_name},
+	subcategory => $thread->{subcategory}	
     };
     bless($ret);
     return $ret;
@@ -34,6 +36,16 @@ sub posts {
 sub author {
     my $self = shift;
     return Data::User->by_id($self->{author});
+}
+
+sub set_title {
+    my $self = shift;
+    my $title = shift;
+    my $cl = Data::MongoClient->get;
+    my $db = $cl->get_database('fujiwara');
+    my $coll = $db->get_collection('threads');
+    $coll->update({_id => $self->{id}},{'$set' => {title => $title}});
+    return $self;
 }
 
 1;

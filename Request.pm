@@ -1,6 +1,7 @@
 package Request;
 
 use HTTP::Body;
+use Encode;
 
 my $MAX_COTENT_LENGTH = 4096;
 
@@ -22,13 +23,25 @@ sub from_psgi_env {
     return $req;
 }
 
+sub headers {
+    my $self = shift;
+    if(!$self->{headers}) {
+	$self->{headers} = {};
+	for my $key (keys %{$self->{env}}) {
+	    if($key =~ /HTTP_(.*)/) {
+		$self->{headers}->{lc($1)} = $self->{env}->{$key};
+	    }
+	}
+    }
+    return $self->{headers};
+}
+
 sub get_cookie {
     my $self = shift;
     my $key = shift;
-    
     if (!$self->{cookies}) {
 	$self->{cookies} = {};
-	my $cookies_str = $self->{env}->{HTTP_COOKIE};
+	my $cookies_str = $self->headers->{cookie};
 	return undef if (!$cookies_str);
 	$self->{cookies}->{$1} = $2 while($cookies_str =~ m/([^=]*)=([^;]*)/g);
     }
@@ -48,7 +61,7 @@ sub params {
 	    $val =~ s/\'//g;
 	    $val =~ s/\+/ /g;
 	    $val =~ s/%(\w\w)/sprintf("%c", hex($1))/ge;
-	    $req->{params}->{$var} = $val;
+	    $req->{params}->{$var} = decode_utf8($val);
 	}
     }
     return $req->{params};

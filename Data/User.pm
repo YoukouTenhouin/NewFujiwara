@@ -31,7 +31,7 @@ sub init {
     my $ret = {
 	id => $user->{_id},
 	name => $user->{name},
-	jobs => $user->{jobs},
+	jobs => {map { $_ => 1 } @{$user->{jobs}}},
 	email => $user->{email}
     };
     bless($ret);

@@ -9,7 +9,7 @@ use Mojo::Template;
 sub new {
     shift;
     my $res = { buf => [],
-		headers => [ 'Content-Type' => 'text/html' ],
+		headers => [ 'Content-Type' => 'text/html','Server' => 'Starman' ],
 		cookies => {},
 		status => 200 };
     bless($res);
@@ -64,7 +64,7 @@ sub abort {
     my $status = shift;
     %$self = (
 	buf => [ $status ],
-	headers => [ 'Content-Type' => 'text/plain' ],
+	headers => [ 'Content-Type' => 'text/plain', 'Server' => 'Starman' ],
 	status => $status,
 	cookies => {}
     );

@@ -1,9 +1,4 @@
 <%
-use Digest::MD5 qw(md5_hex);
-use Render;
-use MongoDB;
-use boolean;
-
 use Data::Post;
 use Data::User;
 
@@ -14,7 +9,7 @@ my $uid;
 my $user;
 if ($ucookie) {
     $uid = Data::User->decode_cookie($ucookie);
-    $user = Data::User->by_id($uid);
+    $user = Data::User->by_id($uid) if($uid);
 }
 %>
 
@@ -32,7 +27,7 @@ if ($ucookie) {
         </a>
 
         <ul class="navbar-links">
-          <li><a href="/">Index</a></li>
+          <li><a href="/" data-instant>Index</a></li>
           <li><a href="#">Categories</a></li>
           <li><a href="#">Tags</a></li>
         </ul>
@@ -51,7 +46,7 @@ if ($ucookie) {
             </ul>
           </li>
 	  % } else {
-	  <li><a href="/login">Login</a></li>
+	  <li><a href="/login" data-instant>Login</a></li>
 	  <li><a href="javascript:;">Register</a></li>
 	  % }
         </ul>
@@ -82,7 +77,8 @@ if ($ucookie) {
 	my $lauthor = $last->author;
 	%>
 	<li><div class="entry">
-	  <h1><a href="/thread/view/<%= $th->{id} %>"><%== $th->{title} %></a></h1>
+	  <h1><a href="/thread/view/<%= $th->{id} %>" data-instant><%== $th->{title} %></a></h1>
+	  <h3><a><%== "$th->{category}/$th->{subcategory}" %></a></h3>
 	  <span class="info-span info-span-left">Published by <%== $author->{name} %> on <%== $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	  <span class="info-span info-span-right">Last Replied by <%== $lauthor->{name} %> on <%== $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	</div></li>
@@ -100,8 +96,14 @@ if ($ucookie) {
       </ul>
       % }
     </div>
+
+    <h3 style="display:none;position:fixed;bottom:0;right:0;color:#333;" id="load-notify">Loading...</h3>
     
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js"></script>
+    <script>
+     InstantClick.init(50,true);
+    </script>
     <script src="/js/nav-dropdown.js"></script>
   </body>
 </html>

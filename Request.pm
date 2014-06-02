@@ -3,8 +3,6 @@ package Request;
 use HTTP::Body;
 use Encode;
 
-my $MAX_COTENT_LENGTH = 4096;
-
 sub from_psgi_env {
     shift;
     my $env = shift;
@@ -14,10 +12,9 @@ sub from_psgi_env {
     };
 
     $req->{env} = $env;
-    
     $req->{content-type} = $env->{CONTENT_TYPE} if ($env->{CONTENT_TYPE});
     $req->{content-length} = $env->{CONTENT_LENGTH} if ($env->{CONTENT_LENGTH});
-    $req->{query-string} = $env->{QUERY_STRING};
+    $req->{query-string} = $env->{QUERY_STRING} if($env->{QUERY_STRING});
     
     bless $req;
     return $req;
@@ -52,7 +49,7 @@ sub params {
     my $req = shift;
     if (!$req->{params}) {
 	my $body = HTTP::Body->new($req->{content-type},$req->{content-length});
-	my($buf) = "";
+	my $buf = "";
 	$req->{env}->{'psgi.input'}->read($buf,$req->{content-length});
 	$req->{params} = {};
 	my @list = split( /\&/, $buf);

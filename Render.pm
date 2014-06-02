@@ -3,12 +3,12 @@ package Render;
 use strict;
 use warnings;
 
+use ConfigFile;
+
 use Cache::Memcached::Fast;
 use Encode;
 
 my $_memd;
-
-my $CACHE = 1;
 
 sub get_memd {
     $_memd = new Cache::Memcached::Fast({
@@ -51,7 +51,7 @@ sub do_render {
 sub render {
     my $post = shift;
     my $ret;
-    if($CACHE) {
+    if(getcfg 'use_cache') {
 	my $cache = get_memd;
 	my $cached = $cache->get($post->{id});
 	if(!$cached) {

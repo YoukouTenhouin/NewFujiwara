@@ -2,6 +2,8 @@
 use Data::Post;
 use Data::User;
 
+use ConfigFile;
+
 my($req,$res,$threads,$pn) = @_;
 
 my $ucookie = $req->get_cookie('userinfo');
@@ -17,13 +19,13 @@ if ($ucookie) {
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title>Index -- Truth Avaliable</title>
+    <title>Index -- <%== getcfg 'site_title' %></title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
       <div id="navbar-left">
         <a id="navbar-brand">
-          Truth Avaliable
+          <%== getcfg 'site_title' %>
         </a>
 
         <ul class="navbar-links">
@@ -54,7 +56,7 @@ if ($ucookie) {
     </nav>
     
     <div class="header" id="header">
-      <h1>Truth Avaliable</h1><span>It's running BACKWARD!</span>
+      <h1><%== getcfg 'site_title' %></h1><span><%== getcfg 'site_subtitle' %></span>
     </div>    
     
     <div class="container">

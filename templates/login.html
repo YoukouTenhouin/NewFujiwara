@@ -2,6 +2,8 @@
 use Digest::MD5 qw(md5_hex);
 use Render;
 
+use ConfigFile;
+
 my($error,$referer,$username) = @_;
 %>
 
@@ -9,13 +11,13 @@ my($error,$referer,$username) = @_;
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title>Login -- Truth Avaliable</title>
+    <title>Login -- <%== getcfg 'site_title' %></title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
       <div id="navbar-left">
         <a id="navbar-brand">
-          Truth Avaliable
+	  <%== getcfg 'site_title' %>
         </a>
 
         <ul class="navbar-links">
@@ -33,7 +35,7 @@ my($error,$referer,$username) = @_;
     </nav>
 
     <div class="header" id="header">
-      <h1>Truth Avaliable</h1><span>It's running BACKWARD!</span>
+      <h1><%== getcfg 'site_title' %></h1><span><%== getcfg 'site_subtitle' %></span>
     </div>    
 
     <div class="container" style="width:960px;margin:auto;">

@@ -5,13 +5,13 @@ use warnings;
 
 use Data::MongoClient;
 use MongoDB::OID;
+use ConfigFile;
 
 use Digest::SHA qw(sha256_hex);
 use MIME::Base64;
 use Encode;
 
-require 'Data/secret_key.pl';
-my $hashed_key = sha256_hex(secret_key());
+my $hashed_key;
 
 sub by_id {
     shift;
@@ -39,6 +39,7 @@ sub init {
 
 sub sign_data {
     my $data = shift;
+    $hashed_key = sha256_hex(getcfg 'secret_key') if(!$hashed_key);
     return sha256_hex(sha256_hex($data)^$hashed_key);
 }
 

@@ -2,6 +2,7 @@
 use Digest::MD5 qw(md5_hex);
 use Render;
 use Data::User;
+use ConfigFile;
 
 my ($req,$res,$th,$posts,$pn) = @_;
 
@@ -18,13 +19,13 @@ if ($ucookie) {
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title><%== $th->{title} %> -- Truth Avaliable</title>
+    <title><%== $th->{title} %> -- <%== getcfg 'site_title' %></title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
       <div id="navbar-left">
         <a id="navbar-brand">
-          Truth Avaliable
+          <%== getcfg 'site_title' %>
         </a>
 
         <ul class="navbar-links">

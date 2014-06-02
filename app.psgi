@@ -4,6 +4,7 @@ use MongoDB::OID;
 use Router;
 use Request;
 use Response;
+use ConfigFile;
 
 require 'view.pl';
 require 'index.pl';
@@ -20,6 +21,7 @@ my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
     );
 
 my $app = sub {
+    loadcfg 'config';
     my $env = shift;
     my $req = Request->from_psgi_env($env);
     my $uri = $req->{uri};

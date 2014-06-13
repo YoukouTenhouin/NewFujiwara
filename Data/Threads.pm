@@ -52,6 +52,25 @@ sub by_id {
     }
 }
 
+sub by_category {
+    shift;
+    my($cid) = @_;
+    my $opts = {
+	hidden => false,
+	category => MongoDB::OID->new($cid)
+    };
+    my $cl = Data::MongoClient->get;
+    my $db = $cl->get_database('fujiwara');
+    my $coll = $db->get_collection('threads');
+    my $cursor = $coll->find($opts);
+    my $ret = {
+	cursor => $cursor,
+	avaliable => 0
+    };
+    bless($ret);
+    return $ret;
+}
+
 sub avaliable {
     my $self = shift;
     return $self->{avaliable};

@@ -36,6 +36,8 @@ sub remove_extra_slash {
 sub do_render {
     my $post = shift;    
     my $content = $post->{content};
+    $content =~ s/\n/\n\n/g;
+    $content =~ s/(```(.*?)```)/join "\n",split "\n\n",$1/sge;
     $content =~ s/(\\\((.+?)\\\))/escape_formula($1)/ge;
     $content =~ s/(\$(.+?)\$)/escape_formula($1)/ge;
     $content =~ s/```math(.*?)```/$1/sg;

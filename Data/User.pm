@@ -26,6 +26,14 @@ sub by_id {
     }
 }
 
+sub by_cookie {
+    shift;
+    my $cookie = shift;
+    my $uid = Data::User->decode_cookie($cookie);
+    return undef if(!$uid);
+    return Data::User->by_id($uid);
+}
+
 sub init {
     my $user = shift;
     my $ret = {

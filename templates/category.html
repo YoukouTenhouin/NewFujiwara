@@ -4,7 +4,9 @@ use Data::User;
 
 use ConfigFile;
 
-my($req,$res,$threads,$pn) = @_;
+my($req,$res,$category,$threads,$pn) = @_;
+my $cat = $category->{category};
+my $subcat = $category->{subcategory};
 
 my $ucookie = $req->get_cookie('userinfo');
 my $uid;
@@ -19,7 +21,7 @@ if ($ucookie) {
   <head>
     <meta charset="utf8"/>
     <link rel="stylesheet" type="text/css" href="/css/s.css" />
-    <title>Index -- <%== getcfg 'site_title' %></title>
+    <title><%== "$cat/$subcat" %> -- <%== getcfg 'site_title' %></title>
   </head>
   <body>
     <nav id="navbar" class="navbar">
@@ -56,7 +58,7 @@ if ($ucookie) {
     </nav>
     
     <div class="header" id="header">
-      <h1><%== getcfg 'site_title' %></h1><span><%== getcfg 'site_subtitle' %></span>
+      <h1><%== "$cat/$subcat" %></h1><span><%== getcfg 'site_subtitle' %></span>
     </div>    
     
     <div class="container">

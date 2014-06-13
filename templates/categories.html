@@ -1,10 +1,11 @@
 <%
-use Data::Post;
-use Data::User;
+use Data::Categories;
+
+my $categories = Data::Categories->all_dict;
 
 use ConfigFile;
 
-my($req,$res,$threads,$pn) = @_;
+my $req = shift;
 
 my $ucookie = $req->get_cookie('userinfo');
 my $uid;
@@ -59,44 +60,18 @@ if ($ucookie) {
       <h1><%== getcfg 'site_title' %></h1><span><%== getcfg 'site_subtitle' %></span>
     </div>    
     
-    <div class="container">
-      % if ($threads->has_prev or $threads->has_next) {
-      <ul class="pager">
-	% if ($threads->has_prev) {
-	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
-	% }
-	% if ($threads->has_next) {
-	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
-	% }
-      </ul>
-      % }
-    
-      <ul class="entry-list">
-	% for my $th (@{$threads->all}) {
-	<%
-	my $author = $th->author;
-	my $last = $th->posts->last;
-	my $lauthor = $last->author;
-	%>
-	<li><div class="entry">
-	  <h1><a href="/thread/view/<%= $th->{id} %>" data-instant><%== $th->{title} %></a></h1>
-	  <h3><a><%== "$th->{category}/$th->{subcategory}" %></a></h3>
-	  <span class="info-span info-span-left">Published by <%== $author->{name} %> on <%== $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
-	  <span class="info-span info-span-right">Last Replied by <%== $lauthor->{name} %> on <%== $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
-	</div></li>
+    <div class="container" style="width:600px;margin:auto;">
+      <ul type="none">
+	% for my $category (keys %$categories) {
+	<li><h1><%== $category %></h1></li>
+	<ul type="none">
+	  % for my $val (@{$categories->{$category}}) {
+	  % my($subcat,$cid) = @{$val};
+	  <li><h3><a class="link" href="/category/<%== $cid %>/1"><%== $subcat %></a></h3></li>
+	  % }
+	</ul>
 	% }
       </ul>
-      
-      % if ($threads->has_prev or $threads->has_next) {
-      <ul class="pager">
-	% if ($threads->has_prev) {
-	<li><a href="/index/<%= $pn - 1 %>">&lt;Prev</a></li>
-	% }
-	% if ($threads->has_next) {
-	<li><a href="/index/<%= $pn + 1 %>">Next&gt;</a></li>
-	% }
-      </ul>
-      % }
     </div>
 
     <h3 style="display:none;position:fixed;bottom:0;right:0;color:#333;" id="load-notify">Loading...</h3>

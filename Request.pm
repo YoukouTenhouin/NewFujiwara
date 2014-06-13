@@ -40,7 +40,7 @@ sub get_cookie {
 	$self->{cookies} = {};
 	my $cookies_str = $self->headers->{cookie};
 	return undef if (!$cookies_str);
-	$self->{cookies}->{$1} = $2 while($cookies_str =~ m/([^=]*)=([^;]*)/g);
+	$self->{cookies}->{$1} = $2 while($cookies_str =~ m/[ \t]*([^=]*)=([^;]*);?/g);
     }
     return $self->{cookies}->{$key};
 }
@@ -64,4 +64,8 @@ sub params {
     return $req->{params};
 }
 
+sub method {
+    return $_[0]->{method};
+}
+    
 1;

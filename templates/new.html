@@ -1,0 +1,154 @@
+<%
+use Data::User;
+use Data::Categories;
+use ConfigFile;
+
+my $req = shift;
+
+my $ucookie = $req->get_cookie('userinfo');
+my $uid;
+my $user;
+if ($ucookie) {
+    $uid = Data::User->decode_cookie($ucookie);
+    $user = Data::User->by_id($uid) if($uid);
+}
+%>
+
+<html>
+  <head>
+    <meta charset="utf8"/>
+    <link rel="stylesheet" type="text/css" href="/css/s.css" />
+    <title>Index -- <%== getcfg 'site_title' %></title>
+  </head>
+  <body>
+    <nav id="navbar" class="navbar">
+      <div id="navbar-left">
+        <a id="navbar-brand">
+          <%== getcfg 'site_title' %>
+        </a>
+
+        <ul class="navbar-links">
+          <li><a href="/" data-instant>Index</a></li>
+          <li><a href="/categories">Categories</a></li>
+          <li><a href="#">Tags</a></li>
+        </ul>
+      </div>
+
+      <div id="navbar-right">
+        <ul class="navbar-links">
+	  <li class="nav-dropdown">
+	    <a href="javascript:;" class="nav-dropdown-link">Drafts</a>
+	    <ul class="nav-dropdown-menu" id="drafts-menu">
+	      <li><a href="javascript:;" id="new-draft-button">New Draft</a></li>
+	    </ul>
+	  </li>
+	  <li><a id="remove-button" href="javascript:;">Remove</a></li>
+          <li><a id="publish-button" href="javascript:;">Publish</a></li>
+          <li class="nav-dropdown">	    
+            <a href="javascript:;" class="nav-dropdown-link"><%== $user->{name} %></a>
+            <ul class="nav-dropdown-menu">
+              <li><a href="javascript:;">User Center</a></li>
+              <li class="nav-dropdown-sep"></li>
+              <li><a href="/logout">Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="container">
+      <h1 id="thread-title" class="editor-title editor-placeholder editable" data-placeholder="Give your thread an amazing title">Give your thread an amazing title</h1>
+      <div id="editor-category-dropdown">
+	<span id="category-dropdown-selected" class="editor-placeholder">Select a category</span>
+	<ul id="category-dropdown">
+	  % for my $category (Data::Categories->all) {
+	  <li data-cid="<%== $category->{id} %>"><span><%== "$category->{category}/$category->{subcategory}" %></span></li>
+	  % }
+	</ul>
+      </div>
+      <div id="editor-tags" class="editor-placeholder editable editable-single-line" data-placeholder="Add some tags here">Add some tags here</div>
+      <div id="editor-contentarea" class="editor-placeholder editable" data-placeholder="Write your excellent post here">Write your excellent post here</div>
+    </div>
+    
+    <form style="display:none;" id="hidden_form" method="POST" action="/new">
+      <input name="title" id="input-title" />
+      <input name="cid" id="input-cid" />
+      <input name="tags" id="input-tags" />
+      <textarea name="content" id="input-content"></textarea>
+    </form>
+
+    <h3 style="display:none;position:fixed;bottom:0;right:0;color:#333;" id="save-notify">Saving...</h3>
+    <h3 style="display:none;position:fixed;bottom:0;right:0;color:#333;" id="publish-notify">Publishing...</h3>
+    
+    <style>
+     #container {
+       width:800px;
+       margin:auto;
+       position:relative;
+       color:black;
+       padding:30px;
+       margin-top:30px;
+       border:1px solid #ccc;
+     }
+     #thread-title {
+       display:block;
+       font-size:36px;
+       height:50px;
+       width:100%;
+       margin-bottom:0;
+     }
+     #editor-contentarea {
+       width:100%;
+       min-height:400px;
+       font-size:18px;
+       white-space:pre-wrap;
+     }
+     .editable:focus {
+       outline:none;
+     }
+     .editor-placeholder {
+       color:#555;
+     }
+     #editor-category-dropdown {
+       margin-bottom:10px;
+     }
+     #editor-tags {
+       margin-bottom:20px;
+       height:30px;
+     }
+     #category-dropdown-selected {
+       width:100%;
+       font-size:24px;
+       margin:0px;
+       cursor:pointer;
+     }
+     #category-dropdown {
+       margin:0px 30px;;
+       width:100%;
+       font-size:24px;
+       position:absolute;
+       left:0;
+       list-style:none;
+       padding:0px;
+       display:none;
+       background:white;
+       border-bottom:1px solid #ccc;
+     }
+     #category-dropdown li {
+       width:100%;
+       display:block;
+       cursor:pointer;
+     }
+     #category-dropdown li:hover {
+       background-color:#ccc;
+     }
+    </style>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js"></script>
+    <script>
+     InstantClick.init(50,true);
+    </script>
+    <script src="/js/new.js"></script>
+    <script src="/js/nav-dropdown.js"></script>
+  </body>
+</html>      

@@ -103,6 +103,15 @@ p code {
 html {
   font-family: Monospace, "Trebuchet MS", "Times New Roman", Times, "Wenquanyi Micro Hei", "Microsoft YaHei";
 }
+.link {
+  display: block;
+  color: #777777;
+  text-decoration: none;
+  transition: ease 0.3s;
+}
+.link:hover {
+  color: #5555ff;
+}
 #posts {
   min-width: 960px;
   padding: 0 20px;
@@ -186,7 +195,7 @@ h1 {
 }
 .entry-list .entry h1 {
   margin-top: 0px;
-  margin-bottom: 30px;
+  margin-bottom: 5px;
 }
 .entry-list .entry h1 a {
   display: block;
@@ -196,6 +205,10 @@ h1 {
 }
 .entry-list .entry h1:hover a {
   color: #5555ff;
+}
+.entry-list .entry h3 {
+  margin-top: 0px;
+  margin-bottom: 30px;
 }
 .entry-list .entry .info-span {
   position: absolute;

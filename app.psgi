@@ -12,12 +12,19 @@ require 'login.pl';
 require 'logout.pl';
 require 'reply.pl';
 require 'modify_title.pl';
+require 'new.pl';
+require 'categories.pl';
+require 'category.pl';
+
 my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
 			  qr'^/thread/view/([^/]+)/(\d+)$' => \&view ,
 			  qr'^/login$' => \&login ,
 			  qr'^/logout$' => \&logout ,
 			  qr'^/post/new$' => \&reply ,
-			  qr'^/api/modify-title$' => \&modify_title
+			  qr'^/api/modify-title$' => \&modify_title ,
+			  qr'^/new$' => \&new ,
+			  qr'^/categories' => \&categories ,
+			  qr'^/category/(\w+)/(\d+)$' => \&category
     );
 
 my $app = sub {

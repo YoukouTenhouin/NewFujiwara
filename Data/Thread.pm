@@ -6,6 +6,7 @@ use warnings;
 use Data::MongoClient;
 use MongoDB::OID;
 use boolean;
+use DateTime;
 
 use Data::Posts;
 use Data::User;
@@ -28,6 +29,28 @@ sub init {
     return $ret;
 }
 
+sub new {
+    shift;
+    my($title,$category,$tags,$author) = @_;
+    my $now = DateTime->now;
+    my $thread = {
+	title => $title,
+	datetime => $now,
+	lastreply => $now,
+	tags => $tags,
+	hidden => false,
+	author => $author->{id},
+	category_name => $category->{category},
+	subcategory => $category->{subcategory},
+	category => $category->{id}
+    };
+    my $cl = Data::MongoClient->get;
+    my $db = $cl->get_database('fujiwara');
+    my $coll = $db->get_collection('threads');
+    my $tid = $coll->insert($thread);
+    return $tid;
+}
+    
 sub posts {
     my $self = shift;
     return Data::Posts->by_thread($self->{id},@_);

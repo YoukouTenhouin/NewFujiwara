@@ -3,8 +3,25 @@ use warnings;
 
 use Data::User;
 use DateTime;
-use Captcha::reCAPTCHA;
+use HTTP::Tiny;
 use ConfigFile;
+
+sub check_captcha {
+    my($privkey,$remoteip,$challenge,$response) = @_;
+    my $http = HTTP::Tiny->new;
+    my $result = $http->post_form(
+	"http://www.google.com/recaptcha/api/verify",{
+	    privatekey => $privkey,
+	    remoteip => $remoteip,
+	    challenge => $challenge,
+	    response => $response
+	});
+    if ($result->{content} =~ m/true/){
+	return true;
+    } else {
+	return false;
+    }
+}
 
 sub register {
     my($req,$res) = @_;
@@ -24,13 +41,13 @@ sub register {
 	if(getcfg 'recaptcha') {
 	    my $challenge = $params->{recaptcha_challenge_field};
 	    my $response = $params->{recaptcha_response_field};
-	    my $c = Captcha::reCAPTCHA->new;
-	    my $result = $c->check_answer(
+	    my $valid_c = check_captcha(
 		(getcfg 'c_private_key'),
-		$req->headers->{x_real_ip},
-		$challenge,$response
+		$req->{x_real_ip},
+		$challenge,
+		$response
 		);
-	    if(!$result->{is_vaild}) {
+	    if(!$valid_c) {
 		$res->render('reg.html',1,$referer,$name,$email);
 		return;
 	    }

@@ -31,7 +31,7 @@ if ($ucookie) {
         </a>
 
         <ul class="navbar-links">
-          <li><a href="/" data-instant>Index</a></li>
+          <li><a href="/">Index</a></li>
           <li><a href="/categories">Categories</a></li>
           <li><a href="#">Tags</a></li>
         </ul>
@@ -40,17 +40,17 @@ if ($ucookie) {
       <div id="navbar-right">
         <ul class="navbar-links">
 	  % if ($user) {
-          <li><a href="/new" data-instant>New</a></li>
+          <li><a href="/new">New</a></li>
           <li class="nav-dropdown">	    
             <a href="javascript:;" class="nav-dropdown-link"><%== $user->{name} %></a>
             <ul class="nav-dropdown-menu">
               <li><a href="javascript:;">User Center</a></li>
               <li class="nav-dropdown-sep"></li>
-              <li><a href="/logout">Logout</a></li>
+              <li><a href="/logout" data-no-instant>Logout</a></li>
             </ul>
           </li>
 	  % } else {
-	  <li><a href="/login" data-instant>Login</a></li>
+	  <li><a href="/login">Login</a></li>
 	  <li><a href="javascript:;">Register</a></li>
 	  % }
         </ul>
@@ -81,7 +81,7 @@ if ($ucookie) {
 	my $lauthor = $last->author;
 	%>
 	<li><div class="entry">
-	  <h1><a href="/thread/view/<%= $th->{id} %>" data-instant><%== $th->{title} %></a></h1>
+	  <h1><a href="/thread/view/<%= $th->{id} %>"><%== $th->{title} %></a></h1>
 	  <h3><a><%== "$th->{category}/$th->{subcategory}" %></a></h3>
 	  <span class="info-span info-span-left">Published by <%== $author->{name} %> on <%== $th->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
 	  <span class="info-span info-span-right">Last Replied by <%== $lauthor->{name} %> on <%== $last->{datetime}->strftime("%Y/%m/%d %H:%M:%S") %></span>
@@ -106,7 +106,7 @@ if ($ucookie) {
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js"></script>
     <script>
-     InstantClick.init(50,true);
+     InstantClick.init(50);
     </script>
     <script src="/js/nav-dropdown.js"></script>
   </body>

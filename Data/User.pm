@@ -34,6 +34,37 @@ sub by_cookie {
     return Data::User->by_id($uid);
 }
 
+sub by_name {
+    shift;
+    my $name = shift;
+    my $db = Data::MongoClient->get->get_database('fujiwara');
+    my $coll = $db->get_collection('users');
+    my $cursor = $coll->find({name_lower => lc($name)});
+    if($cursor->has_next) {
+	return init($cursor->next);
+    } else {
+	return undef;
+    }
+}
+
+sub new {
+    shift;
+    my($name,$pwd,$email) = @_;
+    my $insert = {
+	name => $name,
+	name_lower => lc($name),
+	email => lc($email),
+	hashed_pwd => sha256_hex($pwd),
+	jobs => []
+    };
+
+    my $db = Data::MongoClient->get->get_database('fujiwara');
+    my $coll = $db->get_collection('users');
+    my $uid = $coll->insert($insert);
+    my $user = $coll->find({_id => $uid})->next;
+    return init($user);
+}
+
 sub init {
     my $user = shift;
     my $ret = {

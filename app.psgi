@@ -15,6 +15,7 @@ require 'modify_title.pl';
 require 'new.pl';
 require 'categories.pl';
 require 'category.pl';
+require 'register.pl';
 
 my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
 			  qr'^/thread/view/([^/]+)/(\d+)$' => \&view ,
@@ -24,7 +25,8 @@ my $router = Router->new( qr'^/index/(\d+)$' => \&index ,
 			  qr'^/api/modify-title$' => \&modify_title ,
 			  qr'^/new$' => \&new ,
 			  qr'^/categories' => \&categories ,
-			  qr'^/category/(\w+)/(\d+)$' => \&category
+			  qr'^/category/(\w+)/(\d+)$' => \&category ,
+			  qr'^/reg$' => \&register
     );
 
 my $app = sub {

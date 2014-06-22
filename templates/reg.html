@@ -1,0 +1,103 @@
+<%
+use Digest::MD5 qw(md5_hex);
+use Render;
+
+use ConfigFile;
+
+my($error,$referer,$username,$email) = @_;
+%>
+
+<html>
+  <head>
+    <meta charset="utf8"/>
+    <link rel="stylesheet" type="text/css" href="/css/s.css" />
+    <title>Register -- <%== getcfg 'site_title' %></title>
+  </head>
+  <body>
+    <nav id="navbar" class="navbar">
+      <div id="navbar-left">
+        <a id="navbar-brand">
+	  <%== getcfg 'site_title' %>
+        </a>
+
+        <ul class="navbar-links">
+          <li><a href="/">Index</a></li>
+          <li><a href="/categories">Categories</a></li>
+          <li><a href="#">Tags</a></li>
+        </ul>
+      </div>
+
+      <div id="navbar-right">
+        <ul class="navbar-links">
+	  <li><a href="javascript:;">Register</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="header" id="header">
+      <h1><%== getcfg 'site_title' %></h1><span><%== getcfg 'site_subtitle' %></span>
+    </div>    
+
+    <div class="container" style="width:560px;margin:auto;">
+      <h1>Register</h1>
+      <form method="POST" action="/reg">
+	% if ($error == 1) {
+	<div class="alert alert-failure">
+	  <h3>Wrong captcha code</h3>
+	  <span>Please try again</span>
+	</div>
+	% }
+	% if ($error == 2) {
+	<div class="alert alert-failure">
+	  <h3>User exists</h3>
+	  <span>Maybe another name?</span>
+	</div>
+	% }
+	<div class="form-control-group">
+	  <label>Username</label>
+	  <input type="text" name="name" value="<%== $username %>" placeholder="User name"
+	  % if ($error == 1) {
+	  invalid
+	  % } else {
+	   
+	  % }
+	  />
+	</div>
+	<div class="form-control-group">
+	  <label>Password</label>
+	  <input type="password" name="pwd" placeholder="Password" />
+	</div>
+	<div class="form-control-group">
+	  <label>Email</label>
+	  <input type="email" name="email" placeholder="email" value="<%== $email %>" />
+	</div>
+	<input type="hidden" name="referer" value="<%= $referer %>">
+	% if (getcfg 'recaptcha') {
+	<script type="text/javascript">
+	 var RecaptchaOptions = {
+           theme : 'custom',
+           custom_theme_widget: 'recaptcha_widget'
+	 };
+	</script>
+	
+	<div id="recaptcha_widget" class="form-control-group" style="display:none">
+          <label class="recaptcha_only_if_image">Captcha</label>
+	  <div style="display:inline-block;">
+	    <div id="recaptcha_image" style="cursor:pointer;" onclick="javascript:Recaptcha.reload()"></div>
+            <input type="text" class="form-control" id="recaptcha_response_field" name="recaptcha_response_field" />
+	  </div>
+          <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=<%= getcfg 'c_public_key' %>"></script>
+	% }
+	<input type="submit" value="Register" />
+      </form>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js"></script>
+    <script>
+     InstantClick.init(50);
+    </script>
+    <script src="/js/nav-dropdown.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  </body>
+</html>
+        

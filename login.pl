@@ -34,6 +34,8 @@ sub login {
 	    $res->redirect($referer);
 	    return;
 	}
+    } else {
+	$res->abort(405);
     }
 }
 
